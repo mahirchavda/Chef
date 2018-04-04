@@ -19,6 +19,7 @@ public class User implements Serializable {
         this.catagory = catagory;
     }
 
+    public User(){}
     public String getUsername() {
         return username;
     }

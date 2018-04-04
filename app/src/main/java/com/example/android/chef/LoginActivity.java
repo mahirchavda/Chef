@@ -17,10 +17,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.android.chef.Entities.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
      EditText username,password;
@@ -96,15 +102,34 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful())
                     {
-                        hideProgress();
-                        SharedPreferences sh= PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                        SharedPreferences.Editor ed=sh.edit();
-                        ed.putString("username",username.getText().toString());
-                        ed.commit();
-                        Intent i=new Intent(LoginActivity.this,WelcomeActivity.class);
-                        i.putExtra("username",username.getText().toString());
-                        startActivity(i);
-                        finish();
+                        DatabaseReference dbref=FirebaseDatabase.getInstance().getReference("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+
+                        dbref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                hideProgress();
+                                User user=dataSnapshot.getValue(User.class);
+                                if(user!=null && user.getType().compareTo("C")==0) {
+                                    SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                                    SharedPreferences.Editor ed = sh.edit();
+                                    ed.putString("username", username.getText().toString());
+                                    ed.commit();
+                                    Intent i = new Intent(LoginActivity.this, WelcomeActivity.class);
+                                    i.putExtra("username", username.getText().toString());
+                                    startActivity(i);
+                                    finish();
+                                }
+                                else
+                                {
+                                    Toast.makeText(LoginActivity.this, "please log in from user app ", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                     else
                     {

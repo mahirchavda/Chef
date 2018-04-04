@@ -29,7 +29,6 @@
             android:layout_marginTop="53dp"
             android:ems="15"
             android:hint="PassWord"
-
             android:inputType="textPassword"
             android:gravity="center"
             android:textStyle="italic"/>
@@ -80,7 +79,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="29dp"
-            app:srcCompat="@drawable/login" />
+            android:src="@drawable/login" />
 
 </RelativeLayout>
 

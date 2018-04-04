@@ -31,6 +31,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -127,9 +129,10 @@ public class SignupActivity extends AppCompatActivity {
                                     {
                                         DatabaseReference database=FirebaseDatabase.getInstance().getReference("users");
                                         database=database.child(userinfo.getUid());
-
-
-
+                                        DatabaseReference chefs=FirebaseDatabase.getInstance().getReference("chefs");
+                                        chefs=chefs.child(userinfo.getUid());
+                                        Date d=new Date();
+                                        chefs.setValue(d.getTime());
                                         final User user=new User(usrname,pasword,"C",null);
                                         database.setValue(user);
 
