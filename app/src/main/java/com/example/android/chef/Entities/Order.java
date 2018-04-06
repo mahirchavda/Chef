@@ -15,9 +15,59 @@ public class Order implements Serializable {
     private int quantity;
     private int remaining;
     private String ordernumber;
-    private HashMap<String,String> chefs;
     private long waiting_time;
-    private int item_waiting_time;
+    private long item_waiting_time;
+    private int completed;
+    private long ordertime;
+
+    public long getOrdertime() {
+        return ordertime;
+    }
+
+    public void setOrdertime(long ordertime) {
+        this.ordertime = ordertime;
+    }
+
+
+
+
+    public int getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(int completed) {
+        this.completed = completed;
+    }
+
+    public long getItem_waiting_time() {
+        return item_waiting_time;
+    }
+
+    public void setItem_waiting_time(long item_waiting_time) {
+        this.item_waiting_time = item_waiting_time;
+    }
+
+    private HashMap<String,String> chefs;
+
+    public int getRemaining() {
+        return remaining;
+    }
+
+    public void setRemaining(int remaining) {
+        this.remaining = remaining;
+    }
+
+    public String getOrdernumber() {
+        return ordernumber;
+    }
+
+    public void setOrdernumber(String ordernumber) {
+        this.ordernumber = ordernumber;
+    }
+
+    public HashMap<String,String> getChefs() {
+        return chefs;
+    }
 
     public long getWaiting_time() {
         return waiting_time;
@@ -27,28 +77,8 @@ public class Order implements Serializable {
         this.waiting_time = waiting_time;
     }
 
-    public int getItem_waiting_time() {
-        return item_waiting_time;
-    }
-
-    public void setItem_waiting_time(int item_waiting_time) {
-        this.item_waiting_time = item_waiting_time;
-    }
-
-    public HashMap<String,String> getChefs() {
-        return chefs;
-    }
-
-    public void setChefs(HashMap<String,String> chefs)  {
+    public void setChefs(HashMap<String,String> chefs) {
         this.chefs = chefs;
-    }
-
-    public String getOrdernumber() {
-        return ordernumber;
-    }
-
-    public void setOrdernumber(String ordernumber) {
-        this.ordernumber = ordernumber;
     }
 
     public String getUid() {
@@ -87,27 +117,18 @@ public class Order implements Serializable {
         chefs=new HashMap<>();
     }
 
-    public int getRemaining() {
-        return remaining;
+    public boolean equals(Object o)
+    {
+        Order os=(Order)o;
+        return(o!=null && os!=null && os.getOrdernumber()!=null && getOrdernumber()!=null && ordernumber.compareTo(os.getOrdernumber())==0 && remaining==os.getRemaining() && completed==os.getCompleted());
     }
 
-    public void setRemaining(int remaining) {
-        this.remaining = remaining;
-    }
 
-    public Order(String uid, String item_name, String status, int quantity, int remaining) {
+    public Order(String uid, String item_name, String status, int quantity) {
 
         this.uid = uid;
         this.item_name = item_name;
         this.status = status;
         this.quantity = quantity;
-        this.remaining=remaining;
     }
-
-    public boolean equals(Object o)
-    {
-        Order os=(Order)o;
-        return(o!=null && os!=null && os.getOrdernumber()!=null && getOrdernumber()!=null && ordernumber.compareTo(os.getOrdernumber())==0 && remaining==os.getRemaining());
-    }
-
 }

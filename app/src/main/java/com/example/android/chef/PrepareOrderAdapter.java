@@ -1,11 +1,13 @@
 package com.example.android.chef;
 
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.chef.Entities.Order;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,15 +20,21 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Date;
 
 public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapter.ViewHolder> {
 
       List<Order> mValues;
-
+      SharedPreferences sharedPreferences;
+    long val=0;
     public PrepareOrderAdapter(List<Order> items) {
         mValues = items;
 
+    }
+
+    public PrepareOrderAdapter(List<Order> items, SharedPreferences sharedPreferences) {
+        mValues = items;
+        this.sharedPreferences=sharedPreferences;
     }
 
     @Override
@@ -44,43 +52,41 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
         holder.prepare.setText("complete");
         holder.prepare.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 final int quantity = mValues.get(position).getRemaining();
 
-                final String ordernumber=mValues.get(position).getOrdernumber();
-                DatabaseReference dbr= FirebaseDatabase.getInstance().getReference("orders");
-                Order origin=new Order();
-                dbr.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                final String ordernumber = mValues.get(position).getOrdernumber();
 
-                        if(dataSnapshot.getKey().compareTo(ordernumber)==0) {
-                            Order o = dataSnapshot.getValue(Order.class);
-                            if (o.getChefs().size() == 1 && quantity == 0)
-                                FirebaseDatabase.getInstance().getReference("orders/" + ordernumber).child("status").setValue("completed");
+                Order o = mValues.get(position);
+                DatabaseReference dbr = FirebaseDatabase.getInstance().getReference("orders/" + ordernumber);
+                if (o.getChefs().size() == 1 && quantity == 0) {
+                    FirebaseDatabase.getInstance().getReference("orders/" + ordernumber).child("status").setValue("completed");
+                    //FirebaseDatabase.getInstance().getReference("orders/"+ordernumber).child("completed").setValue(o.getCompleted()+1);
+                    //SharedPreferences.Editor editor=sharedPreferences.edit();
+                    //editor.putInt("prev",0);
+                }
+                    FirebaseDatabase.getInstance().getReference("chefs/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(new Date().getTime());
 
-
-                            for (String ssh : o.getChefs().keySet()) {
-                                if (o.getChefs().get(ssh).compareTo(FirebaseAuth.getInstance().getCurrentUser().getUid()) == 0)
-                                    FirebaseDatabase.getInstance().getReference("orders/" + ordernumber + "/chefs/" + ssh).removeValue();
-                            }
-                        }
-
+                for (String ssh : o.getChefs().keySet()){
+                    if (o.getChefs().get(ssh).compareTo(FirebaseAuth.getInstance().getCurrentUser().getUid()) == 0) {
+                        FirebaseDatabase.getInstance().getReference("orders/" + ordernumber + "/chefs/" + ssh).removeValue();
+                        break;
                     }
+                }
+                dbr.child("completed").setValue(o.getCompleted()+1);
 
+                mValues.remove(position);
+                notifyDataSetChanged();
+                
+                final DatabaseReference dbref=FirebaseDatabase.getInstance().getReference("chefs/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+                
+                
+                dbref.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        val=(long)dataSnapshot.getValue()-new Date().getTime();
+                        Toast.makeText(v.getContext(), "settled", Toast.LENGTH_SHORT).show();
+                        dbref.removeEventListener(this);
                     }
 
                     @Override
@@ -88,58 +94,20 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
 
                     }
                 });
+                
+                
+                
+                
+                
+                
 
-              /*  DatabaseReference apr=FirebaseDatabase.getInstance().getReference("orders/"+ordernumber)
-
-
-
-
-
-                DatabaseReference qr= FirebaseDatabase.getInstance().getReference("orders/"+ordernumber).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                        for(DataSnapshot a:dataSnapshot.getChildren())
-                            if(a.getValue().toString()==FirebaseAuth.getInstance().getCurrentUser().getUid().toString())
-                        FirebaseDatabase.getInstance().getReference("orders/"+ordernumber+"/chefs/"+dataSnapshot.getKey()).removeValue();
-
-                        if(dataSnapshot.getChildrenCount()==1 && quantity==0)
-                        {
-                            FirebaseDatabase.getInstance().getReference("orders").child("status").setValue("completed");
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                })
-                */
-
-                mValues.remove(position);
-                notifyDataSetChanged();
+                
             }
         });
 
-
     }
+
+
 
     @Override
     public int getItemCount() {

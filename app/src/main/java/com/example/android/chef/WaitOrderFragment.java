@@ -64,7 +64,7 @@ public class WaitOrderFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_order_list, container, false);
            rview = (RecyclerView) view;
             orders=new ArrayList<Order>();
-            adapter=new WaitOrderAdapter(orders);
+            adapter=new WaitOrderAdapter(orders,getActivity().getSharedPreferences("myprefs",Context.MODE_PRIVATE));
             rview.setAdapter(adapter);
 
         DatabaseReference dbref= FirebaseDatabase.getInstance().getReference("orders");

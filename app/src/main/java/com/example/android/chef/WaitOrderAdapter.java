@@ -1,11 +1,13 @@
 package com.example.android.chef;
 
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.chef.Entities.Order;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,10 +27,15 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
     }
     private Order o;
     private  List<Order> mValues;
-
+    private SharedPreferences sharedPreferences;
     public WaitOrderAdapter(List<Order> items ) {
         mValues = items;
 
+    }
+
+    public WaitOrderAdapter(List<Order> items,SharedPreferences sharedPreferences ) {
+        mValues = items;
+      this.sharedPreferences=sharedPreferences;
     }
 
     @Override
@@ -47,7 +54,7 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
         holder.prepare.setText("prepare");
         holder.prepare.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 int quantity = mValues.get(position).getRemaining();
                 quantity--;
                 mValues.get(position).setRemaining(quantity);
@@ -60,11 +67,41 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
                 dbr.child("status").setValue("preparing");
                 dbr.child("remaining").setValue(quantity);
                 dbr.child("chefs").push().setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+               // mValues.get(position).setStatus("preparing");
+                //mValues.get(position).setRemaining(quantity);
+                //mValues.get(position).getChefs().put(key,);
+                //dbr.setValue(mValues.get(position));
+                /*DatabaseReference lref=FirebaseDatabase.getInstance().getReference("orders/"+ordernumber+"/completed");
+
+                lref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Toast.makeText(v.getContext(), "set as "+val, Toast.LENGTH_SHORT).show();
+                        editor.commit();
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                */
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int val=sharedPreferences.getInt("prev",0);
+                editor.putInt("prev",val);
+                editor.commit();
+
+
+
+
                 if (quantity == 0) {
                     mValues.remove(position);
-                    notifyDataSetChanged();
+                    //notifyDataSetChanged();
                 }
-
+                notifyDataSetChanged();
                 holder.quantity.setText(Integer.toString(quantity));
             }
         });

@@ -1,6 +1,7 @@
 package com.example.android.chef;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,10 +29,11 @@ public class PrepareOrderFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private long prev=-1;
     private  RecyclerView rview;
     private  PrepareOrderAdapter adapter;
     private ArrayList<Order> orders;
-
+    private SharedPreferences sharedPreferences;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -52,7 +54,7 @@ public class PrepareOrderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        sharedPreferences=getActivity().getSharedPreferences("myprefs",Context.MODE_PRIVATE);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -62,6 +64,7 @@ public class PrepareOrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_list, container, false);
+
 
          rview = (RecyclerView) view;
         adapter=new PrepareOrderAdapter(new ArrayList<Order>());
@@ -80,17 +83,29 @@ public class PrepareOrderFragment extends Fragment {
                 if(o.getStatus().compareTo("preparing")==0 && o.getChefs().containsValue(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     adapter.mValues.add(dataSnapshot.getValue(Order.class));
                     adapter.notifyDataSetChanged();
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putInt("prev",(int)o.getCompleted());
+                    editor.commit();
+                   // Toast.makeText(getActivity(), "added", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
                 Order o=dataSnapshot.getValue(Order.class);
+                //prev=sharedPreferences.getInt("prev",-1);
+                //Toast.makeText(getActivity(), prev+" "+o.getCompleted(), Toast.LENGTH_SHORT).show();
                 if(o.getStatus().compareTo("preparing")==0 && o.getChefs().containsValue(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 {
+                    //Toast.makeText(getActivity(), "changed ", Toast.LENGTH_SHORT).show();
                     adapter.mValues.add(dataSnapshot.getValue(Order.class));
                     adapter.notifyDataSetChanged();
+
                 }
+
+
             }
 
             @Override
@@ -99,6 +114,7 @@ public class PrepareOrderFragment extends Fragment {
             }
 
             @Override
+
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
