@@ -12,6 +12,7 @@ public class Order implements Serializable {
     private String uid;
     private String item_name;
     private String status;
+    private String item_image;
     private int quantity;
     private int remaining;
     private String ordernumber;
@@ -20,6 +21,14 @@ public class Order implements Serializable {
     private int completed;
     private long ordertime;
     private long busytime;
+
+    public String getItem_image() {
+        return item_image;
+    }
+
+    public void setItem_image(String item_image) {
+        this.item_image = item_image;
+    }
 
     public long getOrdertime() {
         return ordertime;

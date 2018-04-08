@@ -1,11 +1,15 @@
 package com.example.android.chef;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.android.chef.Entities.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,10 +24,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
         SharedPreferences sh= PreferenceManager.getDefaultSharedPreferences(this);
 
+        TextView emptyTextView = (TextView) findViewById(R.id.empty_view);
 
 
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if ( ! (networkInfo != null && networkInfo.isConnected())) {
+            emptyTextView.setText(R.string.no_internet_connection);
+        }
 
         if(FirebaseAuth.getInstance().getCurrentUser()!=null)
         {
@@ -56,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
             loginpage(null);
         }
-
-        setContentView(R.layout.activity_main);
 
     }
 

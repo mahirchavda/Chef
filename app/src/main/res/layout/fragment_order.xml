@@ -1,55 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    android:background="#E1E1E1">
 
     <ImageView
-        android:id="@+id/item_image"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="150dp"
         android:layout_weight="1"
-
-        app:srcCompat="@drawable/food" />
+        android:id="@+id/item_image"
+        android:src="@drawable/food" />
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_height="150dp"
         android:orientation="vertical"
+        android:layout_weight="2"
         >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:text="ordernumber"
-        android:textSize="16dp"
-        android:id="@+id/order_number"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/order_number"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:text="ordernumber"
+            />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:text="item name"
-            android:textSize="16dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:id="@+id/item_name"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:text="name"
             />
+
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:text="quantity_remaining"
-            android:textSize="16dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:id="@+id/order_remaining"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:text="quantity_remaining"
             />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:text=""
             android:id="@+id/order_prepare"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="prepare"
+            android:textAppearance="?android:textAppearanceMedium"/>
     </LinearLayout>
 </LinearLayout>

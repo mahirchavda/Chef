@@ -1,14 +1,19 @@
 package com.example.android.chef;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.Image;
+import android.opengl.Visibility;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.android.chef.Entities.Order;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -26,9 +31,11 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
 
       List<Order> mValues;
       SharedPreferences sharedPreferences;
+      Context context;
     long val=0;
-    public PrepareOrderAdapter(List<Order> items) {
+    public PrepareOrderAdapter(List<Order> items,Context context) {
         mValues = items;
+        this.context=context;
 
     }
 
@@ -49,6 +56,8 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
         holder.ordernumber.setText(mValues.get(position).getOrdernumber().toString());
         holder.item.setText(mValues.get(position).getItem_name().toString());
         holder.quantity.setText(Integer.toString(mValues.get(position).getRemaining()));
+        holder.quantity.setVisibility(View.GONE);
+        Glide.with(context).load(mValues.get(position).getItem_image()).placeholder(R.drawable.food).into(holder.image);
         holder.prepare.setText("complete");
         holder.prepare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,12 +104,6 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
                 notifyDataSetChanged();
                 
 
-                
-                
-                
-                
-
-                
             }
         });
 
@@ -115,6 +118,7 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView ordernumber,item,quantity;
+        ImageView image;
         Button prepare;
 
         public ViewHolder(View view) {
@@ -123,6 +127,7 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
             item=(TextView)view.findViewById(R.id.item_name);
             quantity=(TextView)view.findViewById(R.id.order_remaining);
             prepare=(Button) view.findViewById(R.id.order_prepare);
+            image = (ImageView) view.findViewById(R.id.item_image);
 
         }
 
