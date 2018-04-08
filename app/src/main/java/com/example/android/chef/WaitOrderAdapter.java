@@ -66,6 +66,12 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
 
                 dbr.child("status").setValue("preparing");
                 dbr.child("remaining").setValue(quantity);
+
+                if(quantity==mValues.get(position).getQuantity()-1)
+                {
+                    FirebaseDatabase.getInstance().getReference("orders/"+mValues.get(position).getOrdernumber()+"/waiting_time").setValue(mValues.get(position).getQuantity()*mValues.get(position).getItem_waiting_time());
+                }
+
                 dbr.child("chefs").push().setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                // mValues.get(position).setStatus("preparing");
                 //mValues.get(position).setRemaining(quantity);
@@ -89,10 +95,6 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
                 });
                 */
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                int val=sharedPreferences.getInt("prev",0);
-                editor.putInt("prev",val);
-                editor.commit();
 
 
 

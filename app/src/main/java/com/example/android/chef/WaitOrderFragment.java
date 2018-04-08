@@ -80,6 +80,7 @@ public class WaitOrderFragment extends Fragment {
                         if(o.getStatus().compareTo("waiting")==0 || o.getStatus().compareTo("preparing")==0 && o.getRemaining()!=0) {
                             adapter.getmValues().add(dataSnapshot.getValue(Order.class));
                             adapter.notifyDataSetChanged();
+                            rview.scheduleLayoutAnimation();
                         }
                     }
 
@@ -90,7 +91,12 @@ public class WaitOrderFragment extends Fragment {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                        Order o=dataSnapshot.getValue(Order.class);
+                        if(o.getStatus().compareTo("waiting")==0 || o.getStatus().compareTo("preparing")==0 && o.getRemaining()!=0) {
+                            adapter.getmValues().remove(dataSnapshot.getValue(Order.class));
+                            adapter.notifyDataSetChanged();
+                            rview.scheduleLayoutAnimation();
+                        }
                     }
 
                     @Override

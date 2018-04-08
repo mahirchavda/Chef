@@ -57,10 +57,26 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
 
                 final String ordernumber = mValues.get(position).getOrdernumber();
 
-                Order o = mValues.get(position);
+                final Order o = mValues.get(position);
                 DatabaseReference dbr = FirebaseDatabase.getInstance().getReference("orders/" + ordernumber);
                 if (o.getChefs().size() == 1 && quantity == 0) {
-                    FirebaseDatabase.getInstance().getReference("orders/" + ordernumber).child("status").setValue("completed");
+                    {
+                        FirebaseDatabase.getInstance().getReference("orders/" + ordernumber).child("status").setValue("completed");
+                        final DatabaseReference dbref=FirebaseDatabase.getInstance().getReference("busytime");
+                        dbref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                long busytime=(long)dataSnapshot.getValue()-o.getBusytime();
+                                dbref.setValue(busytime);
+                                dbref.removeEventListener(this);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                     //FirebaseDatabase.getInstance().getReference("orders/"+ordernumber).child("completed").setValue(o.getCompleted()+1);
                     //SharedPreferences.Editor editor=sharedPreferences.edit();
                     //editor.putInt("prev",0);
@@ -74,28 +90,11 @@ public class PrepareOrderAdapter extends RecyclerView.Adapter<PrepareOrderAdapte
                     }
                 }
                 dbr.child("completed").setValue(o.getCompleted()+1);
-
+                dbr.child("waiting_time").setValue(o.getRemaining()*o.getItem_waiting_time());
                 mValues.remove(position);
                 notifyDataSetChanged();
                 
-                final DatabaseReference dbref=FirebaseDatabase.getInstance().getReference("chefs/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
-                
-                
-                dbref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        val=(long)dataSnapshot.getValue()-new Date().getTime();
-                        Toast.makeText(v.getContext(), "settled", Toast.LENGTH_SHORT).show();
-                        dbref.removeEventListener(this);
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                
-                
                 
                 
                 

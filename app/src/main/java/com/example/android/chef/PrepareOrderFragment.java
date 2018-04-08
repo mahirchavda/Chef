@@ -83,6 +83,7 @@ public class PrepareOrderFragment extends Fragment {
                 if(o.getStatus().compareTo("preparing")==0 && o.getChefs().containsValue(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     adapter.mValues.add(dataSnapshot.getValue(Order.class));
                     adapter.notifyDataSetChanged();
+                    rview.scheduleLayoutAnimation();
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     editor.putInt("prev",(int)o.getCompleted());
                     editor.commit();
@@ -102,7 +103,7 @@ public class PrepareOrderFragment extends Fragment {
                     //Toast.makeText(getActivity(), "changed ", Toast.LENGTH_SHORT).show();
                     adapter.mValues.add(dataSnapshot.getValue(Order.class));
                     adapter.notifyDataSetChanged();
-
+                    rview.scheduleLayoutAnimation();
                 }
 
 
