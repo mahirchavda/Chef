@@ -69,13 +69,14 @@ public class WaitOrderAdapter extends RecyclerView.Adapter<WaitOrderAdapter.View
 
                 dre.setValue(new Date().getTime()+(long)mValues.get(position).getItem_waiting_time()*60*1000);
 
-                dbr.child("status").setValue("preparing");
                 dbr.child("remaining").setValue(quantity);
 
-                if(quantity==mValues.get(position).getQuantity()-1)
+                if(mValues.get(position).getRemaining()==mValues.get(position).getQuantity()-1)
                 {
                     FirebaseDatabase.getInstance().getReference("orders/"+mValues.get(position).getOrdernumber()+"/waiting_time").setValue(mValues.get(position).getQuantity()*mValues.get(position).getItem_waiting_time());
                 }
+
+                dbr.child("status").setValue("preparing");
 
                 dbr.child("chefs").push().setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                // mValues.get(position).setStatus("preparing");
